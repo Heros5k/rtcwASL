@@ -22,12 +22,17 @@ startup {
 	settings.Add("cat_chap4", false, "Deathshead's Playground", "chaptersOnly");
 	settings.Add("cat_chap5", false, "Return Engagement + Operation Resurrection", "chaptersOnly");
 
-	settings.Add("missionsFirstChapters", false, "Firsts Missions Chapters");
-	settings.Add("miss_chap_1", false, "Escape", "missionsFirstChapters");
-	settings.Add("miss_chap_2", false, "Forest", "missionsFirstChapters");
-	settings.Add("miss_chap_3", false, "SFM", "missionsFirstChapters");
-	settings.Add("miss_chap_4", false, "Norway", "missionsFirstChapters");
-	settings.Add("miss_chap_5", false, "Dam", "missionsFirstChapters");
+	settings.Add("individualLevels", false, "Chapter 1 Individual Levels");
+	settings.Add("miss1_chap_1", false, "Escape", "individualLevels");
+	settings.Add("individualLevelsC2", false, "Chapter 2 Individual Levels");
+	settings.Add("miss1_chap_2", false, "Forest", "individualLevelsC2");
+	settings.Add("individualLevelsC3", false, "Chapter 3 Individual Levels");
+	settings.Add("miss1_chap_3", false, "SFM", "individualLevelsC3");
+	settings.Add("individualLevelsC4", false, "Chapter 4 Individual Levels");
+	settings.Add("miss1_chap_4", false, "Norway", "individualLevelsC4");
+	settings.Add("individualLevelsC5", false, "Chapter 5 Individual Levels");
+	settings.Add("miss1_chap_5", false, "Dam", "individualLevelsC5");
+	settings.Add("miss7_chap_5", false, "Heinrich", "individualLevelsC5");
 
 	Action<string> DebugOutput = (text) => {
 		print("[RTCW Autosplitter] " + text);
@@ -51,11 +56,12 @@ reset{}
 
 start{	
 
-	if(settings["miss_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
-	if(settings["miss_chap_2"]) vars.bsp_list.Add("/forest.bsp");
-	if(settings["miss_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
-	if(settings["miss_chap_4"]) vars.bsp_list.Add("/norway.bsp");
-	if(settings["miss_chap_5"]) vars.bsp_list.Add("/dam.bsp");
+	if(settings["miss1_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
+	if(settings["miss1_chap_2"]) vars.bsp_list.Add("/forest.bsp");
+	if(settings["miss1_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
+	if(settings["miss1_chap_4"]) vars.bsp_list.Add("/norway.bsp");
+	if(settings["miss1_chap_5"]) vars.bsp_list.Add("/dam.bsp");
+	if(settings["miss7_chap_5"]) vars.bsp_list.Add("/end.bsp");
 
 	if(settings["cat_all"] || settings["cat_chap1"]){
 		vars.bsp_list.Add("/escape1.bsp");
@@ -108,7 +114,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap1"] || settings["miss_chap_1"]){
+	if(settings["cat_chap1"] || settings["miss1_chap_1"]){
 		if (current.bsp == "/escape1.bsp" && old.bsp != "/escape1.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -117,7 +123,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap2"] || settings["miss_chap_2"]){
+	if(settings["cat_chap2"] || settings["miss1_chap_2"]){
 		if (current.bsp == "/forest.bsp" && old.bsp != "/forest.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -126,7 +132,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap3"] || settings["miss_chap_3"]){
+	if(settings["cat_chap3"] || settings["miss1_chap_3"]){
 		if (current.bsp == "/sfm.bsp" && old.bsp != "/sfm.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -135,7 +141,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap4"] || settings["miss_chap_4"]){
+	if(settings["cat_chap4"] || settings["miss1_chap_4"]){
 		if (current.bsp == "/norway.bsp" && old.bsp != "/norway.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -144,12 +150,21 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap5"] || settings["miss_chap_5"]){
+	if(settings["cat_chap5"] || settings["miss1_chap_5"]){
 		if (current.bsp == "/dam.bsp" && old.bsp != "/dam.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
 			vars.visited.Clear();
 			vars.visited.Add("/dam.bsp");
+			return true;
+		}
+	}
+	if(settings["miss7_chap_5"]){
+		if (current.bsp == "/end.bsp" && old.bsp != "/end.bsp") {
+			vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/end.bsp");
 			return true;
 		}
 	}
@@ -221,28 +236,28 @@ split
 	}
 	
 	// cords:  old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0  && 
-	if(settings["miss_chap_1"] && current.bsp == "/escape1.bsp"){
+	if(settings["miss1_chap_1"] && current.bsp == "/escape1.bsp"){
 		if(current.finish != 0) return true;
 	}
 	
 	// cords:  current.xpos == -4800.0 && current.ypos == -896.0 && current.zpos == 256.0
-	if (settings["miss_chap_2"] && current.bsp == "/forest.bsp" && current.cs == 1 && old.cs == 0) {
+	if (settings["miss1_chap_2"] && current.bsp == "/forest.bsp" && current.cs == 1 && old.cs == 0) {
 		if(vars.firstcs == true) return true;
 		
 	}
 	
 	// cords:  current.zpos <= -153.0 && old.xpos <= -850.0 && current.ypos >= 2150.0 &&
-	if(settings["miss_chap_3"] && current.bsp == "/sfm.bsp"){
+	if(settings["miss1_chap_3"] && current.bsp == "/sfm.bsp"){
 		if(current.finish != 0) return true;
 	}
 	
 	// cords:  current.ypos >= -1450.0 && current.xpos <= -7998.0 &&
-	if(settings["miss_chap_4"] && current.bsp == "/norway.bsp"){
+	if(settings["miss1_chap_4"] && current.bsp == "/norway.bsp"){
 		if(current.finish != 0) return true;
 	}
 	
 	// cords: no ( trigger is diagonally )
-	if(settings["miss_chap_5"] && current.bsp == "/dam.bsp"){
+	if(settings["miss1_chap_5"] && current.bsp == "/dam.bsp"){
 		if(current.finish != 0) return true;
 	}
 }
