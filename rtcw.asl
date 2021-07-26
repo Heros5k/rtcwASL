@@ -11,7 +11,7 @@ state("WolfSP", "1.45a"){
 	byte cs 			: 		"WolfSP.exe", 		0xEA7B64;
 	
 	int client_status	: 		"WolfSP.exe", 		0x613420;
-	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 
+	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 	// 2 == ESC | 1 == CONSOLE
 	
 	float camera_x		: 		"WolfSP.exe", 		0x7A2F9C;
 	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
@@ -20,6 +20,8 @@ state("WolfSP", "1.45a"){
 	
 	// Only used for individual chapter levels
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
+	
+	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
 	
 }
 
@@ -373,9 +375,9 @@ update{
 	} 
 
 	if(version == "1.45a"){	
-		if((current.client_status == 0) || current.ESC != 0) vars.loadStarted = true;
+		if((current.client_status == 0) || current.ESC == 2) vars.loadStarted = true;
 		else{	
-			if(current.camera_x != 0 ) vars.loadStarted = false;
+			if(current.camera_x != 0 && current.stuck == 0 ) vars.loadStarted = false;
 		}
 	}
 	
