@@ -57,16 +57,18 @@ startup {
 
 	// Individual chapter levels
 	settings.Add("individualLevels", false, "Chapter 1 Individual Levels");
-	settings.Add("miss1_chap_1", false, "Escape", "individualLevels");
+	settings.Add("miss1_chap_1", false, "Escape!", "individualLevels");
+	settings.Add("miss2_chap_1", false, "Castle Keep", "individualLevels");
+	settings.Add("miss3_chap_1", false, "Tram Ride", "individualLevels");
 	settings.Add("individualLevelsC2", false, "Chapter 2 Individual Levels");
-	settings.Add("miss1_chap_2", false, "Forest", "individualLevelsC2");
+	settings.Add("miss1_chap_2", false, "Forest Compound", "individualLevelsC2");
 	settings.Add("individualLevelsC3", false, "Chapter 3 Individual Levels");
-	settings.Add("miss1_chap_3", false, "SFM", "individualLevelsC3");
-	settings.Add("miss2_chap_3", false, "Factory", "individualLevelsC3");
+	settings.Add("miss1_chap_3", false, "Kugelstadt", "individualLevelsC3");
+	settings.Add("miss2_chap_3", false, "The Bombed Factory", "individualLevelsC3");
 	settings.Add("individualLevelsC4", false, "Chapter 4 Individual Levels");
-	settings.Add("miss1_chap_4", false, "Norway", "individualLevelsC4");
+	settings.Add("miss1_chap_4", false, "Ice Station Norway", "individualLevelsC4");
 	settings.Add("individualLevelsC5", false, "Chapter 5 Individual Levels");
-	settings.Add("miss1_chap_5", false, "Dam", "individualLevelsC5");
+	settings.Add("miss1_chap_5", false, "Bramburg Dam", "individualLevelsC5");
 	settings.Add("miss7_chap_5", false, "Heinrich", "individualLevelsC5");
 	
 	// DEBUG MESSAGE
@@ -128,6 +130,8 @@ shutdown{
 start{	
 
 	if(settings["miss1_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
+	if(settings["miss2_chap_1"]) vars.bsp_list.Add("/escape2.bsp");
+	if(settings["miss2_chap_1"]) vars.bsp_list.Add("/tram.bsp");
 	if(settings["miss1_chap_2"]) vars.bsp_list.Add("/forest.bsp");
 	if(settings["miss1_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
 	if(settings["miss2_chap_3"]) vars.bsp_list.Add("/factory.bsp");
@@ -237,6 +241,36 @@ start{
 		}
 	}
 	
+	if(settings["miss2_chap_3"]){
+		if (current.bsp == "/factory.bsp" && old.bsp != "/factory.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/factory.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss2_chap_1"]){
+		if (current.bsp == "/escape2.bsp" && old.bsp != "/escape2.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/escape2.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss3_chap_1"]){
+		if (current.bsp == "/tram.bsp" && old.bsp != "/tram.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/tram.bsp");
+			return true;
+		}
+	}
+	
 	if(settings["miss7_chap_5"]){
 		if (current.bsp == "/end.bsp" && old.bsp != "/end.bsp") {
 			if(vars.debugMessage) vars.DebugOutput("Timer started");
@@ -247,15 +281,7 @@ start{
 		}
 	}
 	
-	if(settings["miss2_chap_3"]){
-		if (current.bsp == "/factory.bsp" && old.bsp != "/factory.bsp") {
-			if(vars.debugMessage) vars.DebugOutput("Timer started");
-			vars.firstcs = true;
-			vars.visited.Clear();
-			vars.visited.Add("/factory.bsp");
-			return true;
-		}
-	}
+	
 }
 
 split{
@@ -375,7 +401,7 @@ split{
 	if(settings["miss2_chap_3"] && current.bsp == "/factory.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
 			(version == "1.45a" && current.finish == 4 )){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SFM)");
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (factory)");
 			return true;
 		}
 	}
