@@ -62,6 +62,7 @@ startup {
 	settings.Add("miss1_chap_2", false, "Forest", "individualLevelsC2");
 	settings.Add("individualLevelsC3", false, "Chapter 3 Individual Levels");
 	settings.Add("miss1_chap_3", false, "SFM", "individualLevelsC3");
+	settings.Add("miss2_chap_3", false, "Factory", "individualLevelsC3");
 	settings.Add("individualLevelsC4", false, "Chapter 4 Individual Levels");
 	settings.Add("miss1_chap_4", false, "Norway", "individualLevelsC4");
 	settings.Add("individualLevelsC5", false, "Chapter 5 Individual Levels");
@@ -129,6 +130,7 @@ start{
 	if(settings["miss1_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
 	if(settings["miss1_chap_2"]) vars.bsp_list.Add("/forest.bsp");
 	if(settings["miss1_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
+	if(settings["miss2_chap_3"]) vars.bsp_list.Add("/factory.bsp");
 	if(settings["miss1_chap_4"]) vars.bsp_list.Add("/norway.bsp");
 	if(settings["miss1_chap_5"]) vars.bsp_list.Add("/dam.bsp");
 	if(settings["miss7_chap_5"]) vars.bsp_list.Add("/end.bsp");
@@ -245,6 +247,15 @@ start{
 		}
 	}
 	
+	if(settings["miss2_chap_3"]){
+		if (current.bsp == "/factory.bsp" && old.bsp != "/factory.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/factory.bsp");
+			return true;
+		}
+	}
 }
 
 split{
@@ -361,6 +372,13 @@ split{
 		}
 	}
 	
+	if(settings["miss2_chap_3"] && current.bsp == "/factory.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SFM)");
+			return true;
+		}
+	}
 }
 
 update{
