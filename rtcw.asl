@@ -60,6 +60,11 @@ startup {
 	settings.Add("miss1_chap_1", false, "Escape!", "individualLevels");
 	settings.Add("miss2_chap_1", false, "Castle Keep", "individualLevels");
 	settings.Add("miss3_chap_1", false, "Tram Ride", "individualLevels");
+	settings.Add("miss4_chap_1", false, "Village", "individualLevels");
+	settings.Add("miss5_chap_1", false, "Catacombs", "individualLevels");
+	settings.Add("miss6_chap_1", false, "Crypt", "individualLevels");
+	settings.Add("miss7_chap_1", false, "The Defiled Church", "individualLevels");
+	settings.Add("miss8_chap_1", false, "Tomb", "individualLevels");
 	settings.Add("individualLevelsC2", false, "Chapter 2 Individual Levels");
 	settings.Add("miss1_chap_2", false, "Forest Compound", "individualLevelsC2");
 	settings.Add("individualLevelsC3", false, "Chapter 3 Individual Levels");
@@ -131,7 +136,12 @@ start{
 
 	if(settings["miss1_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
 	if(settings["miss2_chap_1"]) vars.bsp_list.Add("/escape2.bsp");
-	if(settings["miss2_chap_1"]) vars.bsp_list.Add("/tram.bsp");
+	if(settings["miss3_chap_1"]) vars.bsp_list.Add("/tram.bsp");
+	if(settings["miss4_chap_1"]) vars.bsp_list.Add("/village1.bsp");
+	if(settings["miss5_chap_1"]) vars.bsp_list.Add("/crypt1.bsp");
+	if(settings["miss6_chap_1"]) vars.bsp_list.Add("/crypt2.bsp");
+	if(settings["miss7_chap_1"]) vars.bsp_list.Add("/church.bsp");
+	if(settings["miss8_chap_1"]) vars.bsp_list.Add("/boss1.bsp");
 	if(settings["miss1_chap_2"]) vars.bsp_list.Add("/forest.bsp");
 	if(settings["miss1_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
 	if(settings["miss2_chap_3"]) vars.bsp_list.Add("/factory.bsp");
@@ -271,6 +281,56 @@ start{
 		}
 	}
 	
+	if(settings["miss4_chap_1"]){
+		if (current.bsp == "/village1.bsp" && old.bsp != "/village1.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/village1.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss5_chap_1"]){
+		if (current.bsp == "/crypt1.bsp" && old.bsp != "/crypt1.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/crypt1.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss6_chap_1"]){
+		if (current.bsp == "/crypt2.bsp" && old.bsp != "/crypt2.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/crypt2.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss7_chap_1"]){
+		if (current.bsp == "/church.bsp" && old.bsp != "/church.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/church.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss8_chap_1"]){
+		if (current.bsp == "/boss1.bsp" && old.bsp != "/boss1.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/boss1.bsp");
+			return true;
+		}
+	}
+	
 	if(settings["miss7_chap_5"]){
 		if (current.bsp == "/end.bsp" && old.bsp != "/end.bsp") {
 			if(vars.debugMessage) vars.DebugOutput("Timer started");
@@ -401,10 +461,73 @@ split{
 	if(settings["miss2_chap_3"] && current.bsp == "/factory.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
 			(version == "1.45a" && current.finish == 4 )){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (factory)");
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FACTORY)");
 			return true;
 		}
 	}
+	
+	if(settings["miss2_chap_1"] && current.bsp == "/escape2.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ESCAPE2)");
+			return true;
+		}
+	}
+	
+	if(settings["miss3_chap_1"] && current.bsp == "/tram.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (TRAM)");
+			return true;
+		}
+	}
+	
+	if(settings["miss4_chap_1"] && current.bsp == "/village1.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (VILLAGE1)");
+			return true;
+		}
+	}
+	
+	if(settings["miss5_chap_1"] && current.bsp == "/crypt1.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CRYPT1)");
+			return true;
+		}
+	}
+	
+	if(settings["miss6_chap_1"] && current.bsp == "/crypt2.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CRYPT2)");
+			return true;
+		}
+	}
+	
+	if(settings["miss7_chap_1"] && current.bsp == "/church.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CHURCH)");
+			return true;
+		}
+	}
+	
+	if(settings["miss8_chap_1"]){
+		if (current.bsp == "/boss1.bsp" && current.cs == 1 && old.cs == 0) {
+			if(vars.firstcs == false) {
+				if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
+				return true;
+			}
+			if(vars.firstcs == true) {
+				vars.firstcs = false;
+				if(vars.debugMessage) vars.DebugOutput("First cutscene.");
+			}
+		}
+	}
+	
+	
 }
 
 update{
