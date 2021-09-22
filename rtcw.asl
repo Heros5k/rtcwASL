@@ -21,6 +21,7 @@ state("WolfSP", "1.45a"){
 	// Only used for individual chapter levels
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	
+	
 }
 
 // Patch by Knightmare
@@ -541,9 +542,6 @@ update{
 
 	if(version == "1.45a"){	
 		if((current.client_status == 0) || current.ESC == 2) vars.loadStarted = true;
-		else{	
-			if(current.camera_x != 0 && current.stuck == 0 ) vars.loadStarted = false;
-		}
 	}
 	
 }
