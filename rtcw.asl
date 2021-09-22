@@ -21,8 +21,6 @@ state("WolfSP", "1.45a"){
 	// Only used for individual chapter levels
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	
-	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
-	
 }
 
 // Patch by Knightmare
