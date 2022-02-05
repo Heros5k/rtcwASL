@@ -476,7 +476,7 @@ split{
 	
 	if(settings["miss3_chap_1"] && current.bsp == "/tram.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (TRAM)");
 			return true;
 		}
