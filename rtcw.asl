@@ -484,7 +484,7 @@ split{
 	
 	if(settings["miss4_chap_1"] && current.bsp == "/village1.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (VILLAGE1)");
 			return true;
 		}
