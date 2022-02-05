@@ -287,7 +287,7 @@ start{
 			vars.firstcs = true;
 			vars.visited.Clear();
 			vars.visited.Add("/village1.bsp");
-			return true;
+			return false;
 		}
 	}
 	
