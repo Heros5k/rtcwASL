@@ -74,6 +74,7 @@ startup {
 	settings.Add("miss1_chap_4", false, "Ice Station Norway", "individualLevelsC4");
 	settings.Add("individualLevelsC5", false, "Chapter 5 Individual Levels");
 	settings.Add("miss1_chap_5", false, "Bramburg Dam", "individualLevelsC5");
+	settings.Add("miss4_chap_5", false, "Unhallowed Ground", "individualLevelsC5");
 	settings.Add("miss7_chap_5", false, "Heinrich", "individualLevelsC5");
 	
 	// DEBUG MESSAGE
@@ -147,6 +148,7 @@ start{
 	if(settings["miss2_chap_3"]) vars.bsp_list.Add("/factory.bsp");
 	if(settings["miss1_chap_4"]) vars.bsp_list.Add("/norway.bsp");
 	if(settings["miss1_chap_5"]) vars.bsp_list.Add("/dam.bsp");
+	if(settings["miss4_chap_5"]) vars.bsp_list.Add("/dark.bsp");
 	if(settings["miss7_chap_5"]) vars.bsp_list.Add("/end.bsp");
 
 	if(settings["cat_all"] || settings["cat_chap1"]){
@@ -327,6 +329,16 @@ start{
 			vars.firstcs = true;
 			vars.visited.Clear();
 			vars.visited.Add("/boss1.bsp");
+			return true;
+		}
+	}
+	
+	if(settings["miss4_chap_5"]){
+		if (current.bsp == "/dark.bsp" && old.bsp != "/dark.bsp") {
+			if(vars.debugMessage) vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/dark.bsp");
 			return true;
 		}
 	}
@@ -524,6 +536,14 @@ split{
 				vars.firstcs = false;
 				if(vars.debugMessage) vars.DebugOutput("First cutscene.");
 			}
+		}
+	}
+	
+	if(settings["miss4_chap_5"] && current.bsp == "/dark.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DARK)");
+			return true;
 		}
 	}
 	
