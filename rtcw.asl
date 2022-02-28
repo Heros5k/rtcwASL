@@ -540,7 +540,7 @@ split{
 	}
 	
 	if(settings["miss4_chap_5"] && current.bsp == "/dark.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) ||
+		if((version == "1.42d" && current.finish != 0 && current.stuck != 3 ) ||
 			(version == "1.45a" && current.finish == 4 && current.cs == 0 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DARK)");
 			return true;
