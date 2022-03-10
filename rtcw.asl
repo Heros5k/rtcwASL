@@ -3,11 +3,8 @@
 // https://store.steampowered.com/app/9010/
 // ----------------------------------------
 
-// Patch by KoRrNiK
-// The bytes were found by KoRrNiK
-
-state("WolfSP", "1.45a"){
-	
+// Patch by KoRrNiK | The bytes were found by KoRrNiK
+state("WolfSP", "1.45a"){	
 	string16 bsp 		: 		"WolfSP.exe", 		0x693664;
 	byte cs 			: 		"WolfSP.exe", 		0xEA7B64;
 	
@@ -19,17 +16,13 @@ state("WolfSP", "1.45a"){
 	float ypos 			: 		"WolfSP.exe", 		0x7A2FA4;
 	float zpos 			: 		"WolfSP.exe", 		0x77B0E0;
 	
-	// Only used for individual chapter levels
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
-	
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
 	
 }
 
-// Patch by Knightmare
-// The bytes were found by Hoyo & KoRrNiK
+// Patch by Knightmare | he bytes were found by Hoyo & KoRrNiK
 state("WolfSP", "1.42d"){
-	
 	string16 bsp 		: 		0x13D4, 			0x8;
 	byte cs 			: 		0x26F4, 			0x0;
 	int client_status	: 		0xB24EE0;
@@ -38,12 +31,12 @@ state("WolfSP", "1.42d"){
 	float xpos 			: 		"WolfSP.exe", 		0x5F8Da4;
 	float ypos 			: 		"WolfSP.exe", 		0x5F8Da8;
 	float zpos 			: 		"WolfSP.exe", 		0x5F8Dac;
-	
-	// Only used for individual chapter levels
+
 	int finish			: 		"qagamex86.dll", 	0x57D7D0, 	0x42c; 
 }
 
 startup {
+	int m_chap = 0, i_chap = 0;
 
 	vars.mapListChapter1 = new List<string> { "escape1", "escape2", "tram", "village1", "crypt1", "crypt2", "church", "boss1" };
 	vars.mapListChapter2 = new List<string> { "forest", "rocket", "baseout", "assault" };
@@ -51,54 +44,32 @@ startup {
 	vars.mapListChapter4 = new List<string> { "norway", "xlabs", "boss2" };
 	vars.mapListChapter5 = new List<string> { "dam", "village2", "chateau", "dark", "dig", "castle", "end" };
 
+	vars.chapterNames = new List<string> { "Ominous Rumors + Dark Secret", "Weapons of Vengeance", "Deadly Designs", "Deathshead's Playground", "Return Engagement + Operation Resurrection" };
+	vars.individualNames1 = new List<string> { "Escape!", "Castle Keep", "Tram Ride", "Village", "Catacombs", "Crypt", "The Defiled Church", "Tomb" };
+	vars.individualNames2 = new List<string> { "Forest Compound", "Rocket Base", "Radar Installation", "Air Base Assault" };
+	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "Radar Installation", "The Trainyards", "Secret Weapons Facility" };
+	vars.individualNames4 = new List<string> { "Ice Station Norway", "X-Labs", "Super Soldier" };
+	vars.individualNames5 = new List<string> { "Bramburg Dam", "Paderborn Village", "Chateau Schufstaffel", "Unhallowed Ground", "The Dig", "Return to Castle Wolfenstein", "Heinrich" };
+
 	// Full Game
 	settings.Add("cat_all", 			true, 		"Full game");
 	
 	// Only chapter
 	settings.Add("chaptersOnly", 		false, 		"Chapters");
-	
-	settings.Add("cat_chap1", 			false, 		"Ominous Rumors + Dark Secret", 				"chaptersOnly");
-	settings.Add("cat_chap2", 			false, 		"Weapons of Vengeance", 						"chaptersOnly");
-	settings.Add("cat_chap3", 			false, 		"Deadly Designs", 								"chaptersOnly");
-	settings.Add("cat_chap4", 			false, 		"Deathshead's Playground", 						"chaptersOnly");
-	settings.Add("cat_chap5", 			false, 		"Return Engagement + Operation Resurrection", 	"chaptersOnly");
+	foreach (var names in vars.chapterNames){
+		m_chap++;
+		settings.Add("cat_chap"+m_chap, false, names, "chaptersOnly");
+	}
 
 	// Individual chapter levels
-	settings.Add("individualLevelsC1", 	false, 		"Chapter 1 Individual Levels");
-	settings.Add("miss1_chap_1", 		false, 		"Escape!", 										"individualLevelsC1");
-	settings.Add("miss2_chap_1", 		false, 		"Castle Keep", 									"individualLevelsC1");
-	settings.Add("miss3_chap_1", 		false, 		"Tram Ride", 									"individualLevelsC1");
-	settings.Add("miss4_chap_1", 		false, 		"Village", 										"individualLevelsC1");
-	settings.Add("miss5_chap_1", 		false, 		"Catacombs", 									"individualLevelsC1");
-	settings.Add("miss6_chap_1", 		false, 		"Crypt", 										"individualLevelsC1");
-	settings.Add("miss7_chap_1", 		false, 		"The Defiled Church", 							"individualLevelsC1");
-	settings.Add("miss8_chap_1", 		false, 		"Tomb", 										"individualLevelsC1");
-
-	settings.Add("individualLevelsC2", 	false, 		"Chapter 2 Individual Levels");
-	settings.Add("miss1_chap_2", 		false, 		"Forest Compound", 								"individualLevelsC2");
-	settings.Add("miss2_chap_2", 		false, 		"Rocket Base", 									"individualLevelsC2");
-	settings.Add("miss3_chap_2", 		false, 		"Radar Installation", 							"individualLevelsC2");
-	settings.Add("miss4_chap_2", 		false, 		"Air Base Assault", 							"individualLevelsC2");
-
-	settings.Add("individualLevelsC3", 	false, 		"Chapter 3 Individual Levels");
-	settings.Add("miss1_chap_3", 		false, 		"Kugelstadt", 									"individualLevelsC3");
-	settings.Add("miss2_chap_3", 		false, 		"The Bombed Factory", 							"individualLevelsC3");
-	settings.Add("miss3_chap_3", 		false, 		"The Trainyards", 								"individualLevelsC3");
-	settings.Add("miss4_chap_3", 		false, 		"Secret Weapons Facility", 						"individualLevelsC3");
-
-	settings.Add("individualLevelsC4", 	false, 		"Chapter 4 Individual Levels");
-	settings.Add("miss1_chap_4", 		false, 		"Ice Station Norway", 							"individualLevelsC4");
-	settings.Add("miss2_chap_4", 		false, 		"X-Labs", 										"individualLevelsC4");
-	settings.Add("miss3_chap_4", 		false, 		"Super Soldier", 								"individualLevelsC4");
-	
-	settings.Add("individualLevelsC5", 	false, 		"Chapter 5 Individual Levels");
-	settings.Add("miss1_chap_5", 		false, 		"Bramburg Dam", 								"individualLevelsC5");
-	settings.Add("miss2_chap_5", 		false, 		"Paderborn Village", 							"individualLevelsC5");
-	settings.Add("miss3_chap_5", 		false, 		"Chateau Schufstaffel", 						"individualLevelsC5");
-	settings.Add("miss4_chap_5", 		false, 		"Unhallowed Ground", 							"individualLevelsC5");
-	settings.Add("miss5_chap_5", 		false, 		"The Dig", 										"individualLevelsC5");
-	settings.Add("miss6_chap_5", 		false, 		"Return to Castle Wolfenstein", 				"individualLevelsC5");
-	settings.Add("miss7_chap_5", 		false, 		"Heinrich", 									"individualLevelsC5");
+	for(int i = 1; i <= 5; i++){
+		settings.Add("individualLevelsC"+i, 	false, 		"Chapter "+i+" Individual Levels");
+		foreach (var names in ( i == 1 ? vars.individualNames1 : i == 2 ? vars.individualNames2 : i == 3 ? vars.individualNames3 : i == 4 ? vars.individualNames4 : vars.individualNames5 )){
+			i_chap++;
+			settings.Add("miss"+i_chap+"_chap_"+i, false, names, "individualLevelsC"+i);
+		}
+		i_chap = 0;
+	}
 	
 	// DEBUG MESSAGE
 	Action<string> DebugOutput = (text) => {
@@ -107,11 +78,9 @@ startup {
 	vars.DebugOutput = DebugOutput;
 
 	refreshRate = 84;
-
 }
 
 init{
-	
 	// Useful for debugViewer
 	// https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
 	
@@ -140,16 +109,13 @@ init{
 	}
 
 	if(vars.debugMessage){
-		vars.DebugOutput("Game found!");
-		vars.DebugOutput("Module size: " + idGame);
-		vars.DebugOutput("Found Patch " + version);
+		vars.DebugOutput("Game found | Found Patch" + version + " | Module size: "+ idGame);
 	}
 
 	vars.firstcs 		= 	true;
 	vars.loadStarted 	= 	false;
 	vars.bsp_list 		= 	new List<String>();
 	vars.visited 		= 	new List<String>();
-	
 }
 
 exit{
@@ -163,7 +129,6 @@ shutdown{
 }
 
 start{	
-
 	int listChapters = 0;
 	bool firstLevelChapter = false;
 
@@ -176,20 +141,14 @@ start{
 		listChapters = 0;
 	}
 
-	// ================================================================= FULL GAME 
-
-	if(settings["cat_all"]){
-		if (current.bsp == "/cutscene1.bsp" && current.cs == 1 && old.cs == 0) {
-			if(vars.debugMessage) vars.DebugOutput("Timer started");
-			vars.firstcs = true;
-			vars.visited.Clear();
-			vars.visited.Add("/cutscene1.bsp");
-			vars.visited.Add("/escape1.bsp");
-			return true;
-		}
+	if (settings["cat_all"] && current.bsp == "/cutscene1.bsp" && current.cs == 1 && old.cs == 0) {
+		if(vars.debugMessage) vars.DebugOutput("Timer started");
+		vars.firstcs = true;
+		vars.visited.Clear();
+		vars.visited.Add("/cutscene1.bsp");
+		vars.visited.Add("/escape1.bsp");
+		return true;
 	}
-
-	// ================================================================= CHAPTER 1 / 2 / 3 / 4 / 5
 
 	for(int i = 1; i <= 5; i ++){
 		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
@@ -212,7 +171,6 @@ start{
 }
 
 split{
-	
 	if(!vars.running) return;
 
 	bool isOld = (version == "1.42d" && current.finish != 0) ? true : false;
@@ -220,9 +178,12 @@ split{
 
 	bool cordVillage1 = (current.zpos > 4500.0 && current.zpos < 4580.0 && current.xpos > -460.0 && current.xpos < -300.0 ) ? true : false;
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
-	bool cordDam = (current.zpos >= 5500.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
+
+	int listChapters = 0;
+	bool stoppedTimer = false;
+	bool stoppedCutscene = false;
 
 	if(current.bsp != old.bsp) {
 		if(vars.debugMessage) vars.DebugOutput("Map changed to " + current.bsp);
@@ -234,9 +195,14 @@ split{
 		}
 		else if(vars.debugMessage) vars.DebugOutput("Map change ignored.");
 	}
-	
-	if(settings["cat_chap1"] || settings["miss8_chap_1"]){
-		if (current.bsp == "/boss1.bsp" && current.cs == 1 && old.cs == 0) {
+
+	for(int i = 1; i <= 5; i ++){
+		if(i == 1 && current.bsp == "/boss1.bsp" && ( settings["cat_chap"+i] || settings["miss8_chap_"+i] )) stoppedCutscene = true;
+		if(settings["cat_chap"+i]){
+			if((i == 2 && current.bsp == "/assault.bsp") || (i == 3 && current.bsp == "/swf.bsp")) stoppedCutscene = true;
+		}
+		if(i == 5 && current.bsp == "/end.bsp") stoppedCutscene = true;
+		if (stoppedCutscene && current.cs == 1 && old.cs == 0) {
 			if(vars.firstcs == false) {
 				if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
 				return true;
@@ -246,136 +212,40 @@ split{
 				if(vars.debugMessage) vars.DebugOutput("First cutscene.");
 			}
 		}
+		stoppedCutscene = false;
 	}
-	
-	if(settings["cat_chap2"]){
-		if (current.bsp == "/assault.bsp" && current.cs == 1 && old.cs == 0) {
-			if(vars.firstcs == true) {
-				vars.firstcs = false;
-				if(vars.debugMessage) vars.DebugOutput("First cutscene.");
-				return true;
+
+	if((settings["cat_chap4"] || settings["miss3_chap_4"]) && current.bsp == "/boss2.bsp" && cordBoss2){
+		if(vars.debugMessage) vars.DebugOutput("The timer has stopped (BOSS2)");
+		return true;
+	}
+
+	for(int i = 1; i <= 5; i ++){
+		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
+			listChapters++;
+
+			if(i == 1 && maps == "boos1") continue;
+			if(i == 4 && maps == "boss2") continue;
+			if(i == 5 && maps == "end") continue;
+
+			if(settings["miss" + listChapters + "_chap_"+i] && current.bsp == "/" + maps + ".bsp"){
+
+				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
+				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
+				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
+				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
+
+				if(stoppedTimer){
+					if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
+					return true;
+				}
 			}
 		}
-	}
-	
-	if(settings["cat_chap3"]){
-		if (current.bsp == "/swf.bsp" && current.cs == 1 && old.cs == 0) {
-			if(vars.firstcs == false) {
-				if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
-				return true;
-			}
-			if(vars.firstcs == true) {
-				vars.firstcs = false;
-				if(vars.debugMessage) vars.DebugOutput("First cutscene.");
-			}
-		}
-	}
-	
-	if(( settings["cat_chap4"] || settings["miss3_chap_4"] ) && current.bsp == "/boss2.bsp"){
-		if(cordBoss2){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (BOSS2)");
-			return true;
-		}
-	}
-
-	if (current.bsp == "/end.bsp" && current.cs == 1 && old.cs == 0) {
-		if(vars.firstcs == false) {
-			if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
-			return true;
-		}
-		if(vars.firstcs == true) {
-			vars.firstcs = false;
-			if(vars.debugMessage) vars.DebugOutput("First cutscene.");
-		}
-	}
-
-	int listChapters = 0;
-
-	foreach (var maps in vars.mapListChapter1) {
-		listChapters++;
-		if(maps == "boos1") continue;
-
-		if(settings["miss" + listChapters + "_chap_1"] && current.bsp == "/" + maps + ".bsp"){
-			if((isNew && maps == "tram" && cordTram) ||
-				(isNew && maps == "village1" && cordVillage1) ||
-				isOld || isNew
-			){
-				
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
-	// BOSS1 - IN THE FUNCTIONS CHAPTER
-
-	if (settings["miss1_chap_2"] && current.bsp == "/forest.bsp") {
-		if(current.cs == 1 && old.cs == 0){
-			if(vars.firstcs == true){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FOREST)");
-				return true;
-			}
-		}
-	}
-
-	foreach (var maps in vars.mapListChapter2) {
-		listChapters++;
-		if(maps == "forest") continue;
-
-		if(settings["miss" + listChapters + "_chap_2"] && current.bsp == "/" + maps + ".bsp"){
-			if(isOld || isNew){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
-	foreach (var maps in vars.mapListChapter3) {
-		listChapters++;
-		if(settings["miss" + listChapters + "_chap_3"] && current.bsp == "/" + maps + ".bsp"){
-			if(isOld || isNew){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
-	foreach (var maps in vars.mapListChapter4) {
-		listChapters++;
-		if(maps == "boss2") continue;
-
-		if(settings["miss" + listChapters + "_chap_4"] && current.bsp == "/" + maps + ".bsp"){
-			if(isOld || isNew){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
-	// BOSS2 - IN THE FUNCTIONS CHAPTER
-
-	foreach (var maps in vars.mapListChapter5) {
-		listChapters++;
-		if(maps == "end") continue;
-
-		if(settings["miss" + listChapters + "_chap_5"] && current.bsp == "/" + maps + ".bsp"){
-			if((isNew && maps == "dam" && cordDam) ||
-				(isNew && maps == "dark" && cordDark) ||
-				isOld || isNew
-			){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
+		listChapters = 0;
 	}
 }
 
 update{
-		
 	if(!vars.running) return;
 	
 	switch(version){
@@ -393,7 +263,7 @@ update{
 			}
 			break;
 		}
-		default:{ 
+		case "Unknown":{ 
 			return;
 			break;
 		}
