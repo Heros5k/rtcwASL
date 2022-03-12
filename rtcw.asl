@@ -224,7 +224,7 @@ split{
 		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
 			listChapters++;
 
-			if(i == 1 && maps == "boos1") continue;
+			if(i == 1 && maps == "boss1") continue;
 			if(i == 4 && maps == "boss2") continue;
 			if(i == 5 && maps == "end") continue;
 
