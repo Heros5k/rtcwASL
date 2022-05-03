@@ -10,7 +10,7 @@ state("WolfSP", "1.45a"){
 	
 	int client_status	: 		"WolfSP.exe", 		0x613420;
 	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 	// 2 == ESC | 1 == CONSOLE
-	
+
 	float camera_x		: 		"WolfSP.exe", 		0x7A2F9C;
 	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
 	float ypos 			: 		"WolfSP.exe", 		0x7A2FA4;
@@ -25,7 +25,9 @@ state("WolfSP", "1.45a"){
 state("WolfSP", "1.42d"){
 	string16 bsp 		: 		0x13D4, 			0x8;
 	byte cs 			: 		0x26F4, 			0x0;
+	
 	int client_status	: 		0xB24EE0;
+	byte ESC			:		"WolfSP.exe", 		0x6899D8; 	// 1 == ESC
 	
 	float camera_x		: 		"WolfSP.exe", 		0xDA9D3C;
 	float xpos 			: 		"WolfSP.exe", 		0x5F8Da4;
@@ -257,7 +259,7 @@ update{
 			break;
 		}
 		case "1.42d":{
-			if(current.client_status != 8 && current.client_status != 1) vars.loadStarted = true;
+			if((current.client_status != 8 && current.client_status != 1) || current.ESC == 1) vars.loadStarted = true;
 			else{	
 				if(current.camera_x != 0) vars.loadStarted = false;
 			}
