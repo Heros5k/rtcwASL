@@ -10,6 +10,8 @@ state("WolfSP", "1.45a"){
 	
 	int client_status	: 		"WolfSP.exe", 		0x613420;
 	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 	// 2 == ESC | 1 == CONSOLE
+	
+	float commandFps	:		"WolfSP.exe",		0x689664;
 
 	float camera_x		: 		"WolfSP.exe", 		0x7A2F9C;
 	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
@@ -18,10 +20,10 @@ state("WolfSP", "1.45a"){
 	
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
-	
+
 }
 
-// Patch by Knightmare | he bytes were found by Hoyo & KoRrNiK
+// Patch by Knightmare | The bytes were found by Hoyo & KoRrNiK
 state("WolfSP", "1.42d"){
 	string16 bsp 		: 		0x13D4, 			0x8;
 	byte cs 			: 		0x26F4, 			0x0;
@@ -49,7 +51,7 @@ startup {
 	vars.chapterNames = new List<string> { "Ominous Rumors + Dark Secret", "Weapons of Vengeance", "Deadly Designs", "Deathshead's Playground", "Return Engagement + Operation Resurrection" };
 	vars.individualNames1 = new List<string> { "Escape!", "Castle Keep", "Tram Ride", "Village", "Catacombs", "Crypt", "The Defiled Church", "Tomb" };
 	vars.individualNames2 = new List<string> { "Forest Compound", "Rocket Base", "Radar Installation", "Air Base Assault" };
-	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "Radar Installation", "The Trainyards", "Secret Weapons Facility" };
+	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "The Trainyards", "Secret Weapons Facility" };
 	vars.individualNames4 = new List<string> { "Ice Station Norway", "X-Labs", "Super Soldier" };
 	vars.individualNames5 = new List<string> { "Bramburg Dam", "Paderborn Village", "Chateau Schufstaffel", "Unhallowed Ground", "The Dig", "Return to Castle Wolfenstein", "Heinrich" };
 
@@ -177,11 +179,13 @@ split{
 
 	bool isOld = (version == "1.42d" && current.finish != 0) ? true : false;
 	bool isNew = (version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3) ? true : false;
+	bool isFS = (current.finish == 4 && current.stuck == 0) ? true : false;
 
 	bool cordVillage1 = (current.zpos > 4500.0 && current.zpos < 4580.0 && current.xpos > -460.0 && current.xpos < -300.0 ) ? true : false;
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
+	bool cordxlabs = (current.zpos < -2500.0 && current.ypos < 0.0 && current.xpos > -749.0 && current.xpos < -530.0) ? true : false;
 
 	int listChapters = 0;
 	bool stoppedTimer = false;
@@ -225,17 +229,30 @@ split{
 	for(int i = 1; i <= 5; i ++){
 		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
 			listChapters++;
-
+			
 			if(i == 1 && maps == "boss1") continue;
 			if(i == 4 && maps == "boss2") continue;
 			if(i == 5 && maps == "end") continue;
 
 			if(settings["miss" + listChapters + "_chap_"+i] && current.bsp == "/" + maps + ".bsp"){
 
-				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
+				if(i == 1){
+					if(maps == "village1" && version == "1.45a"){
+						if(isFS && cordVillage1) stoppedTimer = true;
+					} else if(isOld || isNew || (isNew && maps == "tram" && cordTram)) stoppedTimer = true;
+				}
 				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
-				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
-				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
+				if(i == 3 && (isOld || isNew)) stoppedTimer = true;
+				if(i == 4){
+					if(maps == "xlabs" && version == "1.45a"){
+						if(isFS && cordxlabs) stoppedTimer = true;
+					} else if(isOld || isNew) stoppedTimer = true;
+				}
+				if(i == 5){
+					if((maps == "dam" || (maps == "dark" && cordDark)) && version == "1.45a"){
+						if(isFS && isNew) stoppedTimer = true;
+					} else if(isOld || isNew) stoppedTimer = true;
+				}
 
 				if(stoppedTimer){
 					if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
@@ -256,6 +273,7 @@ update{
 			else{	
 				if(current.camera_x != 0) vars.loadStarted = false;
 			}
+			refreshRate = current.commandFps;
 			break;
 		}
 		case "1.42d":{
@@ -270,9 +288,11 @@ update{
 			break;
 		}
 	}
+
 	if(vars.debugMessage){
 		vars.DebugOutput("POSS: X " + current.xpos + " Y " + current.ypos + " Z " + current.zpos + " CS " + current.cs + " F " + current.finish + " CLS " + current.client_status + " S " + current.stuck );
 	}
+
 }
 
 isLoading{	 
