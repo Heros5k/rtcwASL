@@ -20,7 +20,7 @@ state("WolfSP", "1.45a"){
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
 }
 
-// Patch by Knightmare | he bytes were found by Hoyo & KoRrNiK
+// Patch by Knightmare | The bytes were found by Hoyo & KoRrNiK
 state("WolfSP", "1.42d"){
 	string16 bsp 		: 		0x13D4, 			0x8;
 	byte cs 			: 		0x26F4, 			0x0;
@@ -48,7 +48,7 @@ startup {
 	vars.chapterNames = new List<string> { "Ominous Rumors + Dark Secret", "Weapons of Vengeance", "Deadly Designs", "Deathshead's Playground", "Return Engagement + Operation Resurrection" };
 	vars.individualNames1 = new List<string> { "Escape!", "Castle Keep", "Tram Ride", "Village", "Catacombs", "Crypt", "The Defiled Church", "Tomb" };
 	vars.individualNames2 = new List<string> { "Forest Compound", "Rocket Base", "Radar Installation", "Air Base Assault" };
-	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "Radar Installation", "The Trainyards", "Secret Weapons Facility" };
+	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "The Trainyards", "Secret Weapons Facility" };
 	vars.individualNames4 = new List<string> { "Ice Station Norway", "X-Labs", "Super Soldier" };
 	vars.individualNames5 = new List<string> { "Bramburg Dam", "Paderborn Village", "Chateau Schufstaffel", "Unhallowed Ground", "The Dig", "Return to Castle Wolfenstein", "Heinrich" };
 
@@ -234,7 +234,7 @@ split{
 			if(settings["miss" + listChapters + "_chap_"+i] && current.bsp == "/" + maps + ".bsp"){
 
 				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
-				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
+				if(i == 2 && (((maps == "forest" || maps == "assault") && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
 				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
 				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
 
