@@ -181,6 +181,7 @@ split{
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
+	bool cordEscape1 = (current.ypos > 150.0 && current.ypos < 350.0 && current.zpos >= 882.0 && current.zpos <= 1037.0) ? true : false;
 	
 	int listChapters = 0;
 	bool stoppedTimer = false;
@@ -233,7 +234,7 @@ split{
 
 			if(settings["miss" + listChapters + "_chap_"+i] && current.bsp == "/" + maps + ".bsp"){
 
-				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
+				if(i == 1 && ((isNew && maps == "escape1" && cordEscape1) || (isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || (isNew && maps != "escape1"))) stoppedTimer = true;
 				if(i == 2 && (((maps == "forest" || maps == "assault") && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
 				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
 				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
