@@ -42,14 +42,15 @@ state("WolfSP", "1.42d"){
 }
 
 // TrueFix telemetry path.
-// ABI v2 is used by TrueFix 1.43c. The RVAs below are the previous
-// 1.43c locations and MUST be re-resolved against the final 1.43c build.
-state("WolfSP", "1.43c")
+state("WolfSP", "1.43d")
 {
     uint sr_flags              : "WolfSP.exe", 0x115CF8; 
     uint sr_mapSequence        : "WolfSP.exe", 0x115CFC;
     uint sr_transitionSequence : "WolfSP.exe", 0x115D00;
     string32 sr_mapName        : "WolfSP.exe", 0x115D04;
+    // Temporary chapter/IL startup load-removal compatibility hack.
+    // tr.refdef.vieworg[0], relative to WolfSP.exe.
+    float camera_x             : "WolfSP.exe", 0xCC5BF8;
 }
 
 startup {
@@ -113,8 +114,10 @@ startup {
     vars.SR_LOAD_REMOVAL     = 32u;
 
     vars.startNeedsLoadGuard = false;
+    vars.startNeedsRenderGuard = false;
     vars.justStarted = false;
     vars.initialLoadSeen = false;
+    vars.startupRenderGuard = false;
 
     // Split bookkeeping only. Load removal is authoritative in the engine.
     vars.cutsceneCount = 0;
@@ -122,7 +125,7 @@ startup {
 }
 
 init{
-    // print("WolfSP ModuleMemorySize: " + modules.First().ModuleMemorySize);
+    print("WolfSP ModuleMemorySize: " + modules.First().ModuleMemorySize);
     // Useful for debugViewer
     // https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
     
@@ -138,7 +141,7 @@ init{
         }
         case 14585856: 
         {
-            version         = "1.43c";
+            version         = "1.43d";
             vars.running    = true;
             break;
         }
@@ -164,6 +167,13 @@ init{
     vars.bsp_list       =   new List<String>();
     vars.visited        =   new List<String>();
 
+    // Keep initial attachment state identical to an explicit LiveSplit reset.
+    vars.startNeedsLoadGuard = false;
+    vars.startNeedsRenderGuard = false;
+    vars.justStarted = false;
+    vars.initialLoadSeen = false;
+    vars.startupRenderGuard = false;
+
     vars.cutsceneCount = 0;
     vars.secondCutsceneStarted = false;
 
@@ -183,7 +193,7 @@ start{
     if (!vars.running)
         return false;
 
-    if (version == "1.43c")
+    if (version == "1.43d")
     {
         bool cutsceneStarted = (current.sr_flags & vars.SR_CUTSCENE) != 0 && (old.sr_flags & vars.SR_CUTSCENE) == 0;
         bool mapChanged = current.sr_mapSequence != old.sr_mapSequence;
@@ -194,6 +204,7 @@ start{
             vars.visited.Add("cutscene1");
             vars.visited.Add("escape1");
             vars.startNeedsLoadGuard = false;
+            vars.startNeedsRenderGuard = false;
             return true;
         }
 
@@ -210,14 +221,18 @@ start{
 
             for (int i = 0; i < maps.Count; i++)
             {
+                bool individualSelected =
+                    settings["miss" + (i + 1) + "_chap_" + chapter];
+
                 if ((settings["cat_chap" + chapter] && i == 0) ||
-                    settings["miss" + (i + 1) + "_chap_" + chapter])
+                    individualSelected)
                 {
                     if (current.sr_mapName == maps[i])
                     {
                         vars.visited.Clear();
                         vars.visited.Add(current.sr_mapName);
                         vars.startNeedsLoadGuard = true;
+                        vars.startNeedsRenderGuard = true;
                         return true;
                     }
                 }
@@ -271,18 +286,22 @@ start{
 
 onStart
 {
-    if (version != "1.43c")
+    if (version != "1.43d")
         return;
 
     if (vars.startNeedsLoadGuard)
     {
         vars.justStarted = true;
         vars.initialLoadSeen = false;
+        vars.startupRenderGuard = vars.startNeedsRenderGuard;
 
         /*
-         * isLoading() is not called until the next ASL iteration.
-         * Pause Game Time immediately so the first ~12 ms cannot leak in.
+         * LiveSplit starts each attempt with Game Time uninitialized, and
+         * isLoading() is not called until the next ASL iteration. Initialize
+         * Game Time at zero here, then pause it immediately, so the first
+         * update interval cannot leak into the run.
          */
+        timer.SetGameTime(TimeSpan.Zero);
         timer.IsGameTimePaused = true;
 
         if (vars.debugMessage)
@@ -292,19 +311,23 @@ onStart
     {
         vars.justStarted = false;
         vars.initialLoadSeen = false;
+        vars.startupRenderGuard = false;
     }
 
     vars.startNeedsLoadGuard = false;
+    vars.startNeedsRenderGuard = false;
 }
 
 onReset
 {
-    if (version != "1.43c")
+    if (version != "1.43d")
         return;
 
     vars.startNeedsLoadGuard = false;
+    vars.startNeedsRenderGuard = false;
     vars.justStarted = false;
     vars.initialLoadSeen = false;
+    vars.startupRenderGuard = false;
 
     vars.cutsceneCount = 0;
     vars.secondCutsceneStarted = false;
@@ -313,7 +336,7 @@ onReset
 split{
     if(!vars.running) return;
 
-    if(version == "1.43c")
+    if(version == "1.43d")
     {
         bool mapChanged = current.sr_mapSequence != old.sr_mapSequence;
         bool transitionTriggered = current.sr_transitionSequence != old.sr_transitionSequence;
@@ -496,17 +519,26 @@ update{
             }
             break;
         }
-        case "1.43c":{
+        case "1.43d":{
             bool loadRemoval = (current.sr_flags & vars.SR_LOAD_REMOVAL) != 0;
 
             if (vars.justStarted)
             {
-                if (loadRemoval) vars.initialLoadSeen = true;
+                if (loadRemoval)
+                    vars.initialLoadSeen = true;
+
                 if (vars.initialLoadSeen && !loadRemoval)
                 {
-                    vars.justStarted = false;
+                    bool renderReady = !vars.startupRenderGuard || current.camera_x != 0.0f;
 
-                    if (vars.debugMessage) vars.DebugOutput("Startup load guard released");
+                    if (renderReady)
+                    {
+                        vars.justStarted = false;
+                        vars.startupRenderGuard = false;
+
+                        if (vars.debugMessage)
+                            vars.DebugOutput("Startup load guard released");
+                    }
                 }
             }
 
@@ -540,9 +572,11 @@ isLoading
 {
     if (!vars.running) return true;
 
-    if (version == "1.43c")
+    if (version == "1.43d")
     {
         bool loadRemoval = (current.sr_flags & vars.SR_LOAD_REMOVAL) != 0;
+
+        // For chapter/IL startup, justStarted remains set after loadRemoval clears until the renderer has received a real camera position.
         return vars.justStarted || loadRemoval;
     }
 
